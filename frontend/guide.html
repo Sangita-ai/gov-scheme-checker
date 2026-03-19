@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Application Guide — Gov Scheme Checker</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-wrap { max-width: 780px; margin: 0 auto; padding: 1.25rem; }
+    .guide-hero {
+      background: linear-gradient(135deg, var(--india-green-light), #E8EAF6);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      border-left: 5px solid var(--india-green);
+    }
+    .guide-ministry { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .guide-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .guide-benefit { font-size: 1rem; font-weight: 600; color: var(--india-green-dark); }
+    .guide-content {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+    }
+    .guide-loading { text-align: center; padding: 2rem; }
+    .quick-links { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .section-heading {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .ask-box { margin-top: 1.25rem; }
+    .ask-box textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Sans', sans-serif;
+      font-size: 0.875rem;
+      resize: vertical;
+      min-height: 70px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .ask-box textarea:focus { border-color: var(--saffron); }
+    .ask-answer {
+      margin-top: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      display: none;
+    }
+    @media print {
+      .site-header, .quick-links, .ask-box, .back-btn { display: none !important; }
+      .guide-content { border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body class="page-fade">
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="#1A237E" stroke-width="1.5" fill="none"/>
+        <circle cx="18" cy="18" r="2" fill="#1A237E"/>
+        <g stroke="#1A237E" stroke-width="1" opacity="0.7">
+          <line x1="18" y1="4" x2="18" y2="32"/><line x1="4" y1="18" x2="32" y2="18"/>
+        </g>
+      </svg>
+      <span>Application Guide</span>
+    </div>
+    <a href="results.html" class="btn btn-outline btn-sm back-btn">← Back to Results</a>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <!-- Scheme Hero -->
+  <div class="guide-hero" id="guide-hero" style="display:none">
+    <div class="guide-ministry" id="guide-ministry"></div>
+    <div class="guide-title" id="guide-title">Loading...</div>
+    <div class="guide-benefit" id="guide-benefit"></div>
+  </div>
+
+  <!-- Loading -->
+  <div class="guide-loading" id="guide-loading">
+    <div class="spinner"></div>
+    <p class="text-muted">Generating your personalized guide...</p>
+    <p class="text-muted" style="font-size:0.8rem;margin-top:0.3rem">This may take a few seconds</p>
+  </div>
+
+  <!-- Quick Links -->
+  <div class="quick-links" id="quick-links" style="display:none"></div>
+
+  <!-- Guide Content (accordion style) -->
+  <div id="guide-sections"></div>
+
+  <!-- Documents Checklist -->
+  <div id="checklist-section" style="display:none;margin-bottom:1.25rem">
+    <div class="section-heading">📄 Documents Checklist</div>
+    <ul class="checklist" id="doc-checklist"></ul>
+  </div>
+
+  <!-- Helpline -->
+  <div id="helpline-section" style="display:none;margin-bottom:1.25rem">
+    <div class="helpline-card">
+      <div>
+        <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase">📞 Helpline</div>
+        <div class="helpline-number" id="helpline-number"></div>
+      </div>
+      <a id="helpline-link" href="#" class="btn btn-success btn-sm">Call Now</a>
+    </div>
+  </div>
+
+  <!-- Ask a Question -->
+  <div class="card ask-box" id="ask-section" style="display:none">
+    <div class="section-heading">❓ Ask About This Scheme</div>
+    <textarea id="ask-input" placeholder="e.g., What if I don't have land records?"></textarea>
+    <button class="btn btn-primary" style="margin-top:0.5rem" onclick="askQuestion()">Ask →</button>
+    <div class="ask-answer" id="ask-answer"></div>
+  </div>
+
+  <!-- Print -->
+  <div style="text-align:right;margin-top:1rem;margin-bottom:2rem">
+    <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Print Guide</button>
+  </div>
+</div>
+
+<footer class="site-footer">
+  For guidance only. Always apply on official government portals.
+</footer>
+
+<div id="toast-container"></div>
+
+<script>
+const API = 'http://localhost:8000';
+let schemeData = null;
+let schemeId = null;
+let currentLang = 'en';
+let sessionId = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  schemeId = params.get('id');
+  currentLang = params.get('lang') || localStorage.getItem('lang') || 'en';
+  sessionId = sessionStorage.getItem('session_id') || '';
+
+  if (!schemeId) {
+    document.getElementById('guide-loading').innerHTML = '<p class="text-muted">No scheme selected. <a href="results.html">Go back</a></p>';
+    return;
+  }
+
+  await loadGuide();
+});
+
+async function loadGuide() {
+  try {
+    const url = `${API}/api/scheme/${schemeId}?language=${currentLang}${sessionId ? '&session_id=' + sessionId : ''}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    schemeData = data.scheme;
+    const guide = data.guide;
+
+    // Hide loading
+    document.getElementById('guide-loading').style.display = 'none';
+
+    // Render hero
+    document.getElementById('guide-hero').style.display = 'block';
+    document.getElementById('guide-ministry').textContent = schemeData.ministry || '';
+    document.getElementById('guide-title').textContent = schemeData.name_en || '';
+    document.getElementById('guide-benefit').textContent = '💰 ' + (schemeData.benefit_summary || '');
+
+    // Render quick links
+    renderQuickLinks(schemeData);
+
+    // Render guide as accordion
+    renderGuide(guide);
+
+    // Render documents checklist
+    renderChecklist(schemeData.documents || []);
+
+    // Helpline
+    if (schemeData.helpline) {
+      document.getElementById('helpline-section').style.display = 'block';
+      document.getElementById('helpline-number').textContent = schemeData.helpline;
+      document.getElementById('helpline-link').href = 'tel:' + schemeData.helpline;
+    }
+
+    // Show ask section
+    document.getElementById('ask-section').style.display = 'block';
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById('guide-loading').innerHTML = `
+      <p class="text-muted">⚠️ Could not load guide. Make sure the backend is running.</p>
+      <a href="results.html" class="btn btn-outline" style="margin-top:1rem">← Back</a>
+    `;
+  }
+}
+
+function renderQuickLinks(scheme) {
+  const links = document.getElementById('quick-links');
+  const items = [];
+  if (scheme.apply_url) items.push(`<a href="${scheme.apply_url}" target="_blank" rel="noopener" class="btn btn-success">🌐 Apply Online →</a>`);
+  items.push(`<a href="https://locator.csc.gov.in" target="_blank" rel="noopener" class="btn btn-outline">📍 Find Nearest CSC</a>`);
+  if (scheme.helpline) items.push(`<a href="tel:${scheme.helpline}" class="btn btn-outline">📞 Call Helpline</a>`);
+  links.innerHTML = items.join('');
+  links.style.display = 'flex';
+}
+
+function renderGuide(guideText) {
+  if (!guideText) return;
+  const container = document.getElementById('guide-sections');
+
+  // If guide is text, show in a readable card
+  container.innerHTML = `
+    <div class="section-heading">📋 How to Apply — Step by Step</div>
+    <div class="guide-content">${escapeHtml(guideText)}</div>
+  `;
+}
+
+function renderChecklist(docs) {
+  if (!docs || docs.length === 0) return;
+  const listKey = 'checklist_' + schemeId;
+  const saved = JSON.parse(localStorage.getItem(listKey) || '{}');
+  const list = document.getElementById('doc-checklist');
+  list.innerHTML = docs.map((doc, i) => {
+    const checked = saved[i] || false;
+    return `<li class="checklist-item ${checked ? 'checked' : ''}" onclick="toggleCheck(this, ${i}, '${listKey}')">
+      <input type="checkbox" ${checked ? 'checked' : ''} />
+      <span>${doc}</span>
+    </li>`;
+  }).join('');
+  document.getElementById('checklist-section').style.display = 'block';
+}
+
+function toggleCheck(el, idx, key) {
+  el.classList.toggle('checked');
+  const cb = el.querySelector('input');
+  cb.checked = !cb.checked;
+  const saved = JSON.parse(localStorage.getItem(key) || '{}');
+  saved[idx] = cb.checked;
+  localStorage.setItem(key, JSON.stringify(saved));
+}
+
+async function askQuestion() {
+  const input = document.getElementById('ask-input');
+  const q = input.value.trim();
+  if (!q) return;
+
+  const ansEl = document.getElementById('ask-answer');
+  ansEl.style.display = 'block';
+  ansEl.textContent = '⏳ Thinking...';
+
+  try {
+    const res = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: `About the scheme "${schemeData?.name_en || schemeId}": ${q}`,
+        session_id: sessionId || undefined,
+        language: currentLang,
+      }),
+    });
+    const data = await res.json();
+    ansEl.textContent = data.reply || 'No answer available.';
+  } catch (err) {
+    ansEl.textContent = '⚠️ Could not get answer. Please try again.';
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function showToast(msg, type = '') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>

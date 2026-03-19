@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Eligible Schemes — Gov Scheme Checker</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .page-wrap { max-width: 900px; margin: 0 auto; padding: 1.25rem; }
+    .results-header {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .results-title { font-size: 1.3rem; font-weight: 700; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .empty-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+    .scheme-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .scheme-criteria { font-size: 0.78rem; margin-top: 0.3rem; }
+    .criteria-pass { color: var(--india-green); }
+    .criteria-fail { color: var(--partial); }
+    .share-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .collapsed-section { display: none; }
+    .collapsed-section.show { display: grid; }
+    .profile-toggle { cursor: pointer; user-select: none; }
+    .profile-toggle:hover { color: var(--navy); }
+  </style>
+</head>
+<body class="page-fade">
+
+<!-- Header -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="16" stroke="#1A237E" stroke-width="1.5" fill="none"/>
+        <circle cx="18" cy="18" r="2" fill="#1A237E"/>
+        <g stroke="#1A237E" stroke-width="1" opacity="0.7">
+          <line x1="18" y1="4" x2="18" y2="32"/><line x1="4" y1="18" x2="32" y2="18"/>
+          <line x1="8.1" y1="8.1" x2="27.9" y2="27.9"/><line x1="27.9" y1="8.1" x2="8.1" y2="27.9"/>
+        </g>
+      </svg>
+      <span>Your Schemes</span>
+    </div>
+    <a href="check.html" class="btn btn-outline btn-sm">
+      ← <span data-en="Edit Answers" data-hi="उत्तर संपादित करें" data-bn="উত্তর সম্পাদনা করুন">Edit Answers</span>
+    </a>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Profile Summary (collapsible) -->
+  <div class="profile-summary" id="profile-card" style="display:none">
+    <div class="profile-toggle" onclick="toggleProfile()">
+      <strong data-en="👤 Your Profile" data-hi="👤 आपकी प्रोफ़ाइल" data-bn="👤 আপনার প্রোফাইল">👤 Your Profile</strong>
+      <span style="float:right;font-size:0.8rem;color:var(--text-muted)" id="profile-toggle-hint">▼ expand</span>
+    </div>
+    <div class="collapsed-section" id="profile-details">
+      <div class="profile-grid" id="profile-grid"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="stats-bar"></div>
+
+  <!-- Action Row -->
+  <div class="share-row">
+    <div class="filter-row" id="filter-row">
+      <button class="filter-btn active" onclick="setFilter('all')" data-filter="all">
+        <span data-en="All" data-hi="सभी" data-bn="সব">All</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('ELIGIBLE')" data-filter="ELIGIBLE">
+        ✅ <span data-en="Eligible" data-hi="पात्र" data-bn="যোগ্য">Eligible</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('PARTIAL')" data-filter="PARTIAL">
+        ⚡ <span data-en="Partial" data-hi="आंशिक" data-bn="আংশিক">Partial</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('NOT_ELIGIBLE')" data-filter="NOT_ELIGIBLE">
+        ❌ <span data-en="Not Eligible" data-hi="अपात्र" data-bn="অযোগ্য">Not Eligible</span>
+      </button>
+    </div>
+    <button class="whatsapp-btn" onclick="shareOnWhatsApp()" id="whatsapp-btn" style="display:none">
+      📱 Share on WhatsApp
+    </button>
+  </div>
+
+  <!-- Results Grid -->
+  <div class="cards-grid" id="cards-grid">
+    <div class="card" style="grid-column:1/-1;text-align:center;padding:2rem">
+      <div class="spinner"></div>
+      <p class="text-muted" style="margin-top:0.5rem" data-en="Loading results..." data-hi="परिणाम लोड हो रहे हैं..." data-bn="ফলাফল লোড হচ্ছে...">Loading results...</p>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <span data-en="For guidance only. Always verify on official government portals." data-hi="केवल मार्गदर्शन के लिए। हमेशा आधिकारिक सरकारी पोर्टल पर सत्यापित करें।" data-bn="শুধুমাত্র নির্দেশনার জন্য। সর্বদা অফিসিয়াল সরকারি পোর্টালে যাচাই করুন।">For guidance only. Always verify on official government portals.</span>
+</footer>
+
+<div id="toast-container"></div>
+
+<script>
+let allResults = [];
+let userProfile = {};
+let currentFilter = 'all';
+let currentLang = 'en';
+
+const FIELD_LABELS = {
+  age: 'Age', gender: 'Gender', state: 'State', occupation: 'Occupation',
+  income_annual_inr: 'Annual Income', caste_category: 'Caste',
+  is_bpl: 'BPL Card', has_bank_account: 'Bank Account', has_aadhar: 'Aadhar',
+  is_farmer: 'Farmer', number_of_children: 'Children', has_disability: 'Disability',
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  currentLang = sessionStorage.getItem('lang') || localStorage.getItem('lang') || 'en';
+
+  // Apply language
+  document.querySelectorAll('[data-en]').forEach(el => {
+    if (el.dataset[currentLang]) el.textContent = el.dataset[currentLang];
+  });
+
+  // Load data from sessionStorage
+  const rawResults = sessionStorage.getItem('eligibility_results');
+  const rawProfile = sessionStorage.getItem('user_profile');
+
+  if (!rawResults) {
+    showEmptyState('No results found. Please go back and answer the questions.');
+    return;
+  }
+
+  const data = JSON.parse(rawResults);
+  allResults = data.results || [];
+  userProfile = rawProfile ? JSON.parse(rawProfile) : {};
+
+  if (allResults.length === 0) {
+    showEmptyState('No schemes found for your profile. Please update your answers.');
+    return;
+  }
+
+  renderStats(data.summary || {});
+  renderProfile();
+  renderCards(allResults);
+  document.getElementById('whatsapp-btn').style.display = 'flex';
+});
+
+function renderStats(summary) {
+  const bar = document.getElementById('stats-bar');
+  bar.innerHTML = `
+    <div class="stat-item stat-eligible">
+      <span class="stat-number">${summary.eligible || 0}</span>
+      <span class="stat-label">${currentLang === 'hi' ? 'पात्र' : currentLang === 'bn' ? 'যোগ্য' : 'Eligible'}</span>
+    </div>
+    <div class="stat-item stat-partial">
+      <span class="stat-number">${summary.partial || 0}</span>
+      <span class="stat-label">${currentLang === 'hi' ? 'आंशिक' : currentLang === 'bn' ? 'আংশিক' : 'Partial'}</span>
+    </div>
+    <div class="stat-item stat-total">
+      <span class="stat-number">${summary.total || 0}</span>
+      <span class="stat-label">${currentLang === 'hi' ? 'कुल' : currentLang === 'bn' ? 'মোট' : 'Total'}</span>
+    </div>
+  `;
+}
+
+function renderProfile() {
+  if (!userProfile || Object.keys(userProfile).length === 0) return;
+  document.getElementById('profile-card').style.display = 'block';
+  const grid = document.getElementById('profile-grid');
+  const fields = Object.entries(FIELD_LABELS);
+  grid.innerHTML = fields.map(([key, label]) => {
+    const val = userProfile[key];
+    if (val === null || val === undefined) return '';
+    const display = typeof val === 'boolean' ? (val ? '✅ Yes' : '❌ No')
+      : key === 'income_annual_inr' ? '₹' + Number(val).toLocaleString('en-IN')
+      : String(val);
+    return `<div class="profile-field">
+      <span class="profile-field-label">${label}</span>
+      <span class="profile-field-value">${display}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleProfile() {
+  const el = document.getElementById('profile-details');
+  const hint = document.getElementById('profile-toggle-hint');
+  el.classList.toggle('show');
+  hint.textContent = el.classList.contains('show') ? '▲ collapse' : '▼ expand';
+}
+
+function renderCards(results) {
+  const grid = document.getElementById('cards-grid');
+  if (results.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🔍</div>
+      <p>No schemes match this filter.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = results.map(r => {
+    const statusClass = { ELIGIBLE: 'eligible', PARTIAL: 'partial', NOT_ELIGIBLE: 'not-eligible' }[r.status] || '';
+    const badge = {
+      ELIGIBLE: '<span class="badge badge-eligible">✅ Eligible</span>',
+      PARTIAL: '<span class="badge badge-partial">⚡ Partial</span>',
+      NOT_ELIGIBLE: '<span class="badge badge-not-eligible">❌ Not Eligible</span>',
+    }[r.status] || '';
+
+    const docs = (r.documents || []).slice(0, 3).map(d =>
+      `<span class="doc-tag">${d}</span>`
+    ).join('');
+
+    const failedNote = r.failed_criteria?.length
+      ? `<div class="scheme-criteria criteria-fail">⚠ ${r.failed_criteria.join(' · ')}</div>`
+      : '';
+
+    const passedNote = r.status === 'ELIGIBLE' && r.passed_criteria?.length
+      ? `<div class="scheme-criteria criteria-pass">✓ ${r.passed_criteria.slice(0, 2).join(' · ')}</div>`
+      : '';
+
+    const nameLocal = currentLang === 'hi' && r.scheme_name_hi
+      ? `<div style="font-size:0.78rem;color:var(--text-muted)">${r.scheme_name_hi}</div>`
+      : currentLang === 'bn' && r.scheme_name_bn
+      ? `<div style="font-size:0.78rem;color:var(--text-muted)">${r.scheme_name_bn}</div>`
+      : '';
+
+    return `<div class="scheme-card ${statusClass}">
+      <div class="scheme-card-header">
+        <div>
+          <div class="scheme-name">${r.scheme_name}</div>
+          ${nameLocal}
+        </div>
+        ${badge}
+      </div>
+      <div class="benefit-summary">${r.benefit_summary}</div>
+      ${failedNote}${passedNote}
+      ${docs ? `<div class="doc-tags" style="margin-top:0.2rem">${docs}</div>` : ''}
+      <div class="scheme-actions">
+        ${r.apply_url ? `<a href="${r.apply_url}" target="_blank" rel="noopener" class="btn btn-success btn-sm">Apply →</a>` : ''}
+        <a href="guide.html?id=${r.scheme_id}&lang=${currentLang}" class="btn btn-outline btn-sm">📋 Get Guide</a>
+        ${r.helpline ? `<a href="tel:${r.helpline}" class="btn btn-ghost btn-sm">📞 ${r.helpline}</a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
+  });
+  const filtered = filter === 'all'
+    ? allResults
+    : allResults.filter(r => r.status === filter);
+  renderCards(filtered);
+}
+
+function showEmptyState(msg) {
+  document.getElementById('cards-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+    <div class="empty-icon">😕</div>
+    <p>${msg}</p>
+    <a href="check.html" class="btn btn-primary" style="margin-top:1rem">Try Again</a>
+  </div>`;
+}
+
+function shareOnWhatsApp() {
+  const eligible = allResults.filter(r => r.status === 'ELIGIBLE');
+  if (!eligible.length) {
+    showToast('No eligible schemes to share.', 'error');
+    return;
+  }
+  let text = '🇮🇳 *Government Schemes I Qualify For*\n\n';
+  eligible.forEach((r, i) => {
+    text += `${i+1}. *${r.scheme_name}*\n   ${r.benefit_summary}\n   Apply: ${r.apply_url || 'See official portal'}\n\n`;
+  });
+  text += '_(Checked on Gov Scheme Checker — guidance only, verify on official portals)_';
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+function showToast(msg, type = '') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>

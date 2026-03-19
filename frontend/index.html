@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gov Scheme Checker — Find Schemes You Deserve</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .india-stripe { height: 5px; background: linear-gradient(90deg, #FF9933 33%, #fff 33% 66%, #138808 66%); }
+    .stats-chips { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0; }
+    .chip { padding: 0.35rem 1rem; background: var(--surface); border: 1.5px solid var(--border); border-radius: 99px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+    .section { padding: 3rem 0; }
+    .section-title { text-align: center; margin-bottom: 2rem; }
+    .section-title h2 { margin-bottom: 0.4rem; }
+    .featured-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.85rem; }
+    .trust-box { background: var(--navy-light); border: 1px solid #C5CAE9; border-radius: var(--radius); padding: 1rem 1.25rem; text-align: center; font-size: 0.85rem; color: var(--navy); max-width: 650px; margin: 0 auto; }
+    .how-section { background: var(--surface); padding: 3rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .step-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .state-notice { background: var(--saffron-light); border: 1px solid #FFD180; border-radius: var(--radius-sm); padding: 0.6rem 1rem; font-size: 0.82rem; color: var(--saffron-dark); text-align: center; margin: 1rem 0; }
+  </style>
+</head>
+<body>
+
+<div class="india-stripe"></div>
+
+<!-- ── HEADER ─────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">
+      <!-- Ashoka Wheel SVG -->
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="16" stroke="#1A237E" stroke-width="1.5" fill="none"/>
+        <circle cx="18" cy="18" r="5" fill="#1A237E" opacity="0.15"/>
+        <circle cx="18" cy="18" r="2" fill="#1A237E"/>
+        <g stroke="#1A237E" stroke-width="1" opacity="0.7">
+          <line x1="18" y1="4" x2="18" y2="32"/>
+          <line x1="4" y1="18" x2="32" y2="18"/>
+          <line x1="8.1" y1="8.1" x2="27.9" y2="27.9"/>
+          <line x1="27.9" y1="8.1" x2="8.1" y2="27.9"/>
+          <line x1="18" y1="4" x2="25" y2="13.5"/>
+          <line x1="32" y1="18" x2="22.5" y2="25"/>
+          <line x1="18" y1="32" x2="11" y2="22.5"/>
+          <line x1="4" y1="18" x2="13.5" y2="11"/>
+          <line x1="8.1" y1="8.1" x2="13.5" y2="19.2"/>
+          <line x1="27.9" y1="8.1" x2="22.5" y2="19.2"/>
+          <line x1="27.9" y1="27.9" x2="22.5" y2="16.8"/>
+          <line x1="8.1" y1="27.9" x2="13.5" y2="16.8"/>
+        </g>
+      </svg>
+      <span data-en="Gov Scheme Checker" data-hi="सरकारी योजना जाँचकर्ता" data-bn="সরকারি প্রকল্প পরীক্ষক">Gov Scheme Checker</span>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">English</button>
+      <button class="lang-btn" data-lang="hi" onclick="switchLang('hi')">हिन्दी</button>
+      <button class="lang-btn" data-lang="bn" onclick="switchLang('bn')">বাংলা</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <h1 class="hero-title" data-en="Find Government Schemes You Deserve" data-hi="वो सरकारी योजनाएं खोजें जिनके आप हकदार हैं" data-bn="আপনার প্রাপ্য সরকারি প্রকল্পগুলি খুঁজুন">Find Government Schemes You Deserve</h1>
+    <p class="hero-sub" data-en="Answer a few simple questions. We instantly check 25+ central & state schemes you qualify for — in English, Hindi, or Bengali." data-hi="कुछ सरल सवालों के जवाब दें। हम तुरंत जांच करते हैं कि आप 25+ केंद्रीय और राज्य योजनाओं के लिए पात्र हैं।" data-bn="কয়েকটি সহজ প্রশ্নের উত্তর দিন। আমরা তাৎক্ষণিকভাবে পরীক্ষা করি আপনি ২৫+ কেন্দ্রীয় ও রাজ্য প্রকল্পের জন্য যোগ্য কিনা।">Answer a few simple questions. We instantly check 25+ central &amp; state schemes you qualify for — in English, Hindi, or Bengali.</p>
+    <a href="check.html" class="btn btn-primary btn-lg" id="start-btn">
+      <span data-en="Check My Eligibility →" data-hi="पात्रता जांचें →" data-bn="যোগ্যতা পরীক্ষা করুন →">Check My Eligibility →</span>
+    </a>
+    <div class="stats-chips">
+      <span class="chip" data-en="✓ 25+ Schemes" data-hi="✓ 25+ योजनाएं" data-bn="✓ ২৫+ প্রকল্প">✓ 25+ Schemes</span>
+      <span class="chip" data-en="✓ Free Forever" data-hi="✓ पूरी तरह मुफ्त" data-bn="✓ সম্পূর্ণ বিনামূল্যে">✓ Free Forever</span>
+      <span class="chip" data-en="✓ Voice Input" data-hi="✓ आवाज़ से बोलें" data-bn="✓ ভয়েস ইনপুট">✓ Voice Input</span>
+      <span class="chip" data-en="✓ 3 Languages" data-hi="✓ 3 भाषाएं" data-bn="✓ ৩টি ভাষা">✓ 3 Languages</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ────────────────────────────────────── -->
+<section class="how-section">
+  <div class="container">
+    <div class="section-title">
+      <h2 data-en="How It Works" data-hi="यह कैसे काम करता है" data-bn="এটি কীভাবে কাজ করে">How It Works</h2>
+      <p class="text-muted" data-en="3 simple steps to find your benefits" data-hi="आपके लाभ खोजने के 3 सरल कदम" data-bn="আপনার সুবিধা খুঁজে পেতে ৩টি সহজ পদক্ষেপ">3 simple steps to find your benefits</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">💬</div>
+        <div class="step-number">1</div>
+        <h3 style="margin:0.5rem 0 0.3rem" data-en="Tell us about yourself" data-hi="अपने बारे में बताएं" data-bn="নিজের সম্পর্কে বলুন">Tell us about yourself</h3>
+        <p class="text-muted" style="font-size:0.875rem" data-en="Answer simple questions via chat. Use voice or type in your language." data-hi="चैट के माध्यम से सरल सवालों के जवाब दें। अपनी भाषा में बोलें या टाइप करें।" data-bn="চ্যাটের মাধ্যমে সহজ প্রশ্নের উত্তর দিন। আপনার ভাষায় বলুন বা টাইপ করুন।">Answer simple questions via chat. Use voice or type in your language.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔍</div>
+        <div class="step-number">2</div>
+        <h3 style="margin:0.5rem 0 0.3rem" data-en="We check 25+ schemes" data-hi="हम 25+ योजनाएं जांचते हैं" data-bn="আমরা ২৫+ প্রকল্প পরীক্ষা করি">We check 25+ schemes</h3>
+        <p class="text-muted" style="font-size:0.875rem" data-en="Our AI instantly matches your profile against all central and West Bengal state schemes." data-hi="हमारी AI तुरंत आपकी प्रोफ़ाइल को सभी केंद्रीय और पश्चिम बंगाल की योजनाओं से मिलाती है।" data-bn="আমাদের AI তাৎক্ষণিকভাবে আপনার প্রোফাইল সমস্ত কেন্দ্রীয় ও পশ্চিমবঙ্গ রাজ্য প্রকল্পের সাথে মেলায়।">Our AI instantly matches your profile against all central and West Bengal state schemes.</p>
+      </div>
+      <div class="step">
+        <div class="step-icon">📋</div>
+        <div class="step-number">3</div>
+        <h3 style="margin:0.5rem 0 0.3rem" data-en="Get step-by-step guide" data-hi="चरण-दर-चरण गाइड पाएं" data-bn="ধাপে ধাপে গাইড পান">Get step-by-step guide</h3>
+        <p class="text-muted" style="font-size:0.875rem" data-en="For each eligible scheme, get personalized application instructions and document checklist." data-hi="प्रत्येक पात्र योजना के लिए, व्यक्तिगत आवेदन निर्देश और दस्तावेज़ चेकलिस्ट प्राप्त करें।" data-bn="প্রতিটি যোগ্য প্রকল্পের জন্য, ব্যক্তিগতকৃত আবেদন নির্দেশনা এবং নথির চেকলিস্ট পান।">For each eligible scheme, get personalized application instructions and document checklist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED SCHEMES ────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2 data-en="Popular Schemes" data-hi="लोकप्रिय योजनाएं" data-bn="জনপ্রিয় প্রকল্পসমূহ">Popular Schemes</h2>
+      <p class="text-muted" data-en="We check all of these and 19 more instantly" data-hi="हम इन सभी और 19 और योजनाओं की तुरंत जांच करते हैं" data-bn="আমরা এগুলি সব এবং আরও ১৯টি তাৎক্ষণিকভাবে পরীক্ষা করি">We check all of these and 19 more instantly</p>
+    </div>
+    <div class="featured-grid">
+      <div class="featured-scheme-card">
+        <div class="featured-scheme-icon">🌾</div>
+        <div class="featured-scheme-name">PM-KISAN</div>
+        <div class="featured-scheme-benefit">₹6,000/year for farmers</div>
+      </div>
+      <div class="featured-scheme-card">
+        <div class="featured-scheme-icon">🏥</div>
+        <div class="featured-scheme-name">Ayushman Bharat</div>
+        <div class="featured-scheme-benefit">₹5 lakh health insurance</div>
+      </div>
+      <div class="featured-scheme-card" style="border-top-color:var(--india-green)">
+        <div class="featured-scheme-icon">💐</div>
+        <div class="featured-scheme-name">Lakshmir Bhandar</div>
+        <div class="featured-scheme-benefit">₹500–1000/month for WB women</div>
+      </div>
+      <div class="featured-scheme-card">
+        <div class="featured-scheme-icon">🏪</div>
+        <div class="featured-scheme-name">PM Mudra Loan</div>
+        <div class="featured-scheme-benefit">Loan up to ₹5 lakh</div>
+      </div>
+      <div class="featured-scheme-card">
+        <div class="featured-scheme-icon">📚</div>
+        <div class="featured-scheme-name">NSP Scholarship</div>
+        <div class="featured-scheme-benefit">₹25,000/year for students</div>
+      </div>
+      <div class="featured-scheme-card">
+        <div class="featured-scheme-icon">🛡️</div>
+        <div class="featured-scheme-name">PMSBY Insurance</div>
+        <div class="featured-scheme-benefit">₹2 lakh cover at ₹20/year</div>
+      </div>
+    </div>
+    <div class="state-notice" style="margin-top:1rem">
+      🗺️ <span data-en="West Bengal state schemes (Lakshmir Bhandar, Kanyashree, Krishak Bandhu, Swasthya Sathi, Rupashree) are also included!" data-hi="पश्चिम बंगाल राज्य योजनाएं (लक्ष्मीर भंडार, कन्याश्री, कृषक बंधु, स्वास्थ्य साथी, रूपश्री) भी शामिल हैं!" data-bn="পশ্চিমবঙ্গ রাজ্য প্রকল্পগুলি (লক্ষ্মীর ভাণ্ডার, কন্যাশ্রী, কৃষক বন্ধু, স্বাস্থ্য সাথী, রূপশ্রী)ও অন্তর্ভুক্ত!">West Bengal state schemes (Lakshmir Bhandar, Kanyashree, Krishak Bandhu, Swasthya Sathi, Rupashree) are also included!</span>
+    </div>
+
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="check.html" class="btn btn-primary btn-lg" id="start-btn2">
+        <span data-en="Start Checking Now — It's Free" data-hi="अभी जांचना शुरू करें — यह मुफ्त है" data-bn="এখনই পরীক্ষা শুরু করুন — এটি বিনামূল্যে">Start Checking Now — It's Free</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer style="background:#1A237E;color:rgba(255,255,255,0.9);padding:0;margin-top:2rem">
+
+  <!-- India stripe at top -->
+  <div style="height:5px;background:linear-gradient(90deg,#FF9933 33%,#fff 33% 66%,#138808 66%)"></div>
+
+  <!-- Main footer grid -->
+  <div style="max-width:1100px;margin:0 auto;padding:2rem 1.25rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2rem">
+
+    <!-- Column 1: About -->
+    <div>
+      <div style="font-family:'Noto Serif',serif;font-size:1.05rem;font-weight:700;margin-bottom:0.75rem;color:#fff">
+        🇮🇳 Gov Scheme Checker
+      </div>
+      <p style="font-size:0.82rem;color:rgba(255,255,255,0.7);line-height:1.6;margin-bottom:0.75rem">
+        A free AI-powered tool to help Indian citizens discover and apply for government welfare schemes — in English, Hindi, and Bengali.
+      </p>
+      <div style="font-size:0.75rem;color:rgba(255,255,255,0.45)">
+        ⚠️ For guidance only. Not affiliated with any government body.
+      </div>
+    </div>
+
+    
+    <div>
+      <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#FF9933;margin-bottom:0.75rem">
+        🌐 Official Portals
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem">
+        <li><a href="https://www.myscheme.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ myscheme.gov.in</a></li>
+        <li><a href="https://pmkisan.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ PM-KISAN Portal</a></li>
+        <li><a href="https://pmjay.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Ayushman Bharat</a></li>
+        <li><a href="https://scholarships.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ NSP Scholarships</a></li>
+        <li><a href="https://pmayg.nic.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ PM Awas Yojana</a></li>
+        <li><a href="https://mudra.org.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ PM Mudra Loan</a></li>
+        <li><a href="https://nrega.nic.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ MGNREGS Portal</a></li>
+        <li><a href="https://jansuraksha.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Jan Suraksha (PMSBY)</a></li>
+        <li><a href="https://swasthyasathi.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Swasthya Sathi (WB)</a></li>
+        <li><a href="https://locator.csc.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Find Nearest CSC</a></li>
+      </ul>
+    </div>
+
+   
+    <div>
+      <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#FF9933;margin-bottom:0.75rem">
+        📞 Important Helplines
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem;font-size:0.82rem">
+        <li><a href="tel:14555" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 14555 — Ayushman Bharat</a></li>
+        <li><a href="tel:155261" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 155261 — PM-KISAN</a></li>
+        <li><a href="tel:1800116446" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-116-446 — PM Awas</a></li>
+        <li><a href="tel:1800111555" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-111-555 — MGNREGS</a></li>
+        <li><a href="tel:1906" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1906 — PM Ujjwala</a></li>
+        <li><a href="tel:1800180111" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-180-111 — PM Mudra</a></li>
+        <li><a href="tel:1800110001" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-110-001 — Jan Dhan</a></li>
+        <li><a href="tel:1800116515" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-116-515 — Fasal Bima</a></li>
+        <li><a href="tel:18001804444" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-180-4444 — Krishak Bandhu</a></li>
+        <li><a href="tel:18003455384" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1800-345-5384 — Swasthya Sathi</a></li>
+        <li><a href="tel:17923" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 17923 — PM Vishwakarma</a></li>
+        <li><a href="tel:1551" style="color:rgba(255,255,255,0.85);text-decoration:none">📞 1551 — Kisan Credit Card</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#FF9933;margin-bottom:0.75rem">
+        🔗 Quick Links
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem">
+        <li><a href="check.html" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Check My Eligibility</a></li>
+        <li><a href="results.html" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ View My Results</a></li>
+        <li><a href="https://www.india.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ india.gov.in</a></li>
+        <li><a href="https://www.myscheme.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ All Schemes — myscheme</a></li>
+        <li><a href="https://uidai.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Aadhar — uidai.gov.in</a></li>
+        <li><a href="https://www.digilocker.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ DigiLocker</a></li>
+        <li><a href="https://umang.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ UMANG App</a></li>
+        <li><a href="https://locator.csc.gov.in" target="_blank" style="color:rgba(255,255,255,0.8);font-size:0.82rem;text-decoration:none">→ Find Nearest CSC Centre</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar — removed "Powered by" line, removed "IN" -->
+  <div style="border-top:1px solid rgba(255,255,255,0.12);padding:0.85rem 1.25rem;text-align:center;max-width:1100px;margin:0 auto">
+    <span style="font-size:0.75rem;color:rgba(255,255,255,0.45)">
+      © 2025 Gov Scheme Checker &nbsp;·&nbsp; For guidance only &nbsp;·&nbsp; Verify on official government portals &nbsp;·&nbsp; Not affiliated with any government body
+    </span>
+  </div>
+
+  <!-- India stripe at bottom -->
+  <div style="height:4px;background:linear-gradient(90deg,#FF9933 33%,#fff 33% 66%,#138808 66%)"></div>
+
+</footer>
+
+<div id="toast-container"></div>
+
+<script>
+// ── Language Switcher ────────────────────────────────────
+const LANGS = ['en', 'hi', 'bn'];
+
+function switchLang(lang) {
+  localStorage.setItem('lang', lang);
+  // Update all data-{lang} elements
+  document.querySelectorAll('[data-en]').forEach(el => {
+    if (el.dataset[lang]) el.textContent = el.dataset[lang];
+  });
+  // Update button states
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+  // Update html lang
+  document.documentElement.lang = lang;
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', () => {
+  const lang = localStorage.getItem('lang') || 'en';
+  switchLang(lang);
+
+  // Append lang param to CTA buttons
+  document.querySelectorAll('[href="check.html"]').forEach(a => {
+    a.href = `check.html?lang=${lang}`;
+  });
+});
+
+// Toast helper (available globally)
+function showToast(msg, type = '') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Check Eligibility — Gov Scheme Checker</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { overflow: hidden; }
+    .profile-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-shrink: 0;
+    }
+    .profile-bar-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+    .profile-bar .progress-wrap { flex: 1; }
+    .profile-pct { font-size: 0.8rem; font-weight: 700; color: var(--navy); white-space: nowrap; min-width: 35px; text-align: right; }
+    .view-results-wrap {
+      padding: 0.75rem 1rem;
+      background: var(--india-green-light);
+      border-top: 1px solid #A5D6A7;
+      flex-shrink: 0;
+      display: none;
+    }
+    .view-results-wrap.show { display: block; }
+    .voice-status {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding: 0 0.5rem;
+      min-width: 80px;
+    }
+    .voice-status.active { color: #F44336; font-weight: 600; }
+    .lang-indicator {
+      padding: 0.2rem 0.6rem;
+      background: var(--navy-light);
+      color: var(--navy);
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    @media (min-width: 768px) {
+      .chat-messages { max-width: 700px; margin: 0 auto; width: 100%; }
+      .chat-input-bar { max-width: 700px; margin: 0 auto; }
+    }
+  </style>
+</head>
+<body>
+<div class="chat-layout page-fade">
+
+  <!-- Header -->
+  <div class="chat-header">
+    <a href="index.html" class="btn btn-ghost btn-sm" style="padding:0.3rem 0.5rem">←</a>
+    <div class="chat-header-info">
+      <div class="chat-header-title" data-en="Scheme Eligibility Advisor" data-hi="योजना पात्रता सलाहकार" data-bn="প্রকল্প যোগ্যতা উপদেষ্টা">Scheme Eligibility Advisor</div>
+      <div class="chat-header-sub" data-en="Answer a few questions to find your benefits" data-hi="अपने लाभ खोजने के लिए कुछ सवालों के जवाब दें" data-bn="আপনার সুবিধা খুঁজে পেতে কয়েকটি প্রশ্নের উত্তর দিন">Answer a few questions to find your benefits</div>
+    </div>
+    <span class="lang-indicator" id="lang-badge">EN</span>
+  </div>
+
+  <!-- Profile Progress Bar -->
+  <div class="profile-bar">
+    <span class="profile-bar-label" data-en="Profile" data-hi="प्रोफ़ाइल" data-bn="প্রোফাইল">Profile</span>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="profile-bar" style="width:0%"></div>
+    </div>
+    <span class="profile-pct" id="profile-pct">0%</span>
+  </div>
+
+  <!-- Chat Messages -->
+  <div class="chat-messages" id="chat-messages"></div>
+
+  <!-- View Results Banner -->
+  <div class="view-results-wrap" id="results-banner">
+    <button class="btn btn-success btn-block" onclick="goToResults()">
+      🎉 <span data-en="View Your Eligible Schemes →" data-hi="अपनी पात्र योजनाएं देखें →" data-bn="আপনার যোগ্য প্রকল্পগুলি দেখুন →">View Your Eligible Schemes →</span>
+    </button>
+  </div>
+
+  <!-- Input Bar -->
+  <div class="chat-input-bar">
+    <textarea
+      class="chat-input"
+      id="chat-input"
+      rows="1"
+      placeholder="Type your answer..."
+      onkeydown="handleKeyDown(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <div class="voice-status" id="voice-status"></div>
+    <button class="mic-btn" id="mic-btn" onclick="toggleVoice()" title="Voice input">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        <line x1="12" y1="19" x2="12" y2="23"/>
+        <line x1="8" y1="23" x2="16" y2="23"/>
+      </svg>
+    </button>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+
+const API = 'http://localhost:8000';
+let sessionId = null;
+let currentLang = 'en';
+let currentProfile = {};
+let profilePct = 0;
+let recognition = null;
+let isRecording = false;
+let isWaiting = false;
+
+const WELCOME = {
+  en: "Namaste! 🙏 I'm here to help you find government schemes you qualify for.\n\nMay I know your age please?",
+  hi: "नमस्ते! 🙏 मैं यहाँ आपकी मदद के लिए हूँ — आपको किन सरकारी योजनाओं का लाभ मिल सकता है।\n\nकृपया अपनी उम्र बताएं?",
+  bn: "নমস্কার! 🙏 আমি এখানে আপনাকে সরকারি প্রকল্পগুলি খুঁজে পেতে সাহায্য করতে এসেছি।\n\nআপনার বয়স কত?",
+};
+
+const PLACEHOLDERS = {
+  en: "Type your answer...",
+  hi: "अपना जवाब टाइप करें...",
+  bn: "আপনার উত্তর টাইপ করুন...",
+};
+
+const LANG_LABELS = { en: 'EN', hi: 'हि', bn: 'বা' };
+const SPEECH_LANG = { en: 'en-IN', hi: 'hi-IN', bn: 'bn-IN' };
+
+// ── Init ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Load language
+  const params = new URLSearchParams(window.location.search);
+  currentLang = params.get('lang') || localStorage.getItem('lang') || 'en';
+  localStorage.setItem('lang', currentLang);
+
+  // Update UI for language
+  document.getElementById('lang-badge').textContent = LANG_LABELS[currentLang] || 'EN';
+  document.getElementById('chat-input').placeholder = PLACEHOLDERS[currentLang] || PLACEHOLDERS.en;
+  document.querySelectorAll('[data-en]').forEach(el => {
+    if (el.dataset[currentLang]) el.textContent = el.dataset[currentLang];
+  });
+
+  // Generate session ID
+  sessionId = 'sess_' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+  // Show welcome message (no API call needed)
+  setTimeout(() => addBubble('agent', WELCOME[currentLang] || WELCOME.en), 400);
+
+  // Init voice
+  initVoice();
+});
+
+// ── Bubble Helpers ────────────────────────────────────────
+function addBubble(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = `bubble-wrap ${role}`;
+
+  const bubble = document.createElement('div');
+  bubble.className = `bubble ${role}`;
+  bubble.textContent = text;
+
+  const time = document.createElement('div');
+  time.className = 'bubble-time';
+  time.textContent = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+
+  wrap.appendChild(bubble);
+  wrap.appendChild(time);
+
+  const container = document.getElementById('chat-messages');
+  container.appendChild(wrap);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTyping() {
+  const wrap = document.createElement('div');
+  wrap.id = 'typing';
+  wrap.className = 'bubble-wrap agent';
+
+  const ind = document.createElement('div');
+  ind.className = 'typing-indicator';
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'typing-dot';
+    ind.appendChild(dot);
+  }
+  wrap.appendChild(ind);
+  document.getElementById('chat-messages').appendChild(wrap);
+  document.getElementById('chat-messages').scrollTop = 9999;
+}
+
+function removeTyping() {
+  document.getElementById('typing')?.remove();
+}
+
+// ── Send Message ──────────────────────────────────────────
+async function sendMessage() {
+  if (isWaiting) return;
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  autoResize(input);
+  addBubble('user', msg);
+  setWaiting(true);
+  showTyping();
+
+  try {
+    const res = await fetch(`${API}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: msg,
+        session_id: sessionId,
+        language: currentLang,
+      }),
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    removeTyping();
+    addBubble('agent', data.reply);
+
+    // Update session
+    if (data.session_id) sessionId = data.session_id;
+    if (data.profile) currentProfile = data.profile;
+    profilePct = data.profile_complete || 0;
+
+    // Update progress bar
+    document.getElementById('profile-bar').style.width = profilePct + '%';
+    document.getElementById('profile-pct').textContent = profilePct + '%';
+
+    // Show results button when ready
+    if (profilePct >= 70) {
+      document.getElementById('results-banner').classList.add('show');
+    }
+
+  } catch (err) {
+    removeTyping();
+    console.error(err);
+    addBubble('agent', '⚠️ Connection error. Please check that the backend is running on port 8000.');
+  } finally {
+    setWaiting(false);
+  }
+}
+
+function setWaiting(state) {
+  isWaiting = state;
+  document.getElementById('send-btn').disabled = state;
+  document.getElementById('chat-input').disabled = state;
+}
+
+function handleKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+// ── Go to Results ─────────────────────────────────────────
+async function goToResults() {
+  if (!currentProfile || Object.keys(currentProfile).length === 0) {
+    showToast('Please answer a few more questions first.', 'error');
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/api/check-eligibility`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ profile: currentProfile }),
+    });
+    const data = await res.json();
+    sessionStorage.setItem('eligibility_results', JSON.stringify(data));
+    sessionStorage.setItem('user_profile', JSON.stringify(currentProfile));
+    sessionStorage.setItem('lang', currentLang);
+    window.location.href = `results.html?lang=${currentLang}`;
+  } catch (err) {
+    console.error(err);
+    showToast('Error fetching results. Please try again.', 'error');
+  }
+}
+
+// ── Voice Input ───────────────────────────────────────────
+function initVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('mic-btn').title = 'Voice not supported in this browser';
+    document.getElementById('mic-btn').style.opacity = '0.4';
+    return;
+  }
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = SPEECH_LANG[currentLang] || 'en-IN';
+
+  recognition.onresult = (e) => {
+    const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+    document.getElementById('chat-input').value = transcript;
+    autoResize(document.getElementById('chat-input'));
+    document.getElementById('voice-status').textContent = '🎤 ' + transcript.slice(0, 20) + '...';
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+    document.getElementById('voice-status').className = 'voice-status';
+    document.getElementById('voice-status').textContent = '';
+    // Auto-submit if there's text
+    const val = document.getElementById('chat-input').value.trim();
+    if (val) setTimeout(sendMessage, 500);
+  };
+
+  recognition.onerror = () => {
+    isRecording = false;
+    document.getElementById('mic-btn').classList.remove('recording');
+    document.getElementById('voice-status').textContent = '';
+  };
+}
+
+function toggleVoice() {
+  if (!recognition) {
+    showToast('Voice input not supported in this browser. Use Chrome.', 'error');
+    return;
+  }
+  if (isRecording) {
+    recognition.stop();
+  } else {
+    recognition.lang = SPEECH_LANG[currentLang] || 'en-IN';
+    recognition.start();
+    isRecording = true;
+    document.getElementById('mic-btn').classList.add('recording');
+    document.getElementById('voice-status').className = 'voice-status active';
+    document.getElementById('voice-status').textContent = '🎤 Listening...';
+  }
+}
+
+// ── Toast ─────────────────────────────────────────────────
+function showToast(msg, type = '') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>
