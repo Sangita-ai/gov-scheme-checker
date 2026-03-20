@@ -112,7 +112,7 @@
 <div id="toast-container"></div>
 
 <script>
-
+// ── State ─────────────────────────────────────────────────
 const API = 'https://gov-scheme-checker-1.onrender.com';
 let sessionId = null;
 let currentLang = 'en';
@@ -162,13 +162,23 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── Bubble Helpers ────────────────────────────────────────
+function renderMarkdown(text) {
+  // Convert **bold** → <strong>, then escape remaining HTML, preserve newlines
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/
+/g, '<br>');
+}
+
 function addBubble(role, text) {
   const wrap = document.createElement('div');
   wrap.className = `bubble-wrap ${role}`;
 
   const bubble = document.createElement('div');
   bubble.className = `bubble ${role}`;
-  bubble.textContent = text;
+  // Use innerHTML so **bold** renders properly instead of showing asterisks
+  bubble.innerHTML = renderMarkdown(text);
 
   const time = document.createElement('div');
   time.className = 'bubble-time';
