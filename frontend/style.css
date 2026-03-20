@@ -3,7 +3,8 @@
    Indian flag colors: Saffron, White, Green + Navy accent
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans:wght@300;400;500;600;700&display=swap');
+/* Fonts loaded via <link> in HTML for better reliability on GitHub Pages */
+/* Fallback stack ensures page works even if fonts fail to load */
 
 /* ── CSS Variables ── */
 :root {
@@ -37,14 +38,14 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Noto Sans', Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
 }
 
-h1, h2, h3 { font-family: 'Noto Serif', serif; font-weight: 700; line-height: 1.25; }
+h1, h2, h3 { font-family: 'Noto Serif', Georgia, serif; font-weight: 700; line-height: 1.25; }
 h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
 h2 { font-size: clamp(1.3rem, 3vw, 1.8rem); }
 h3 { font-size: 1.1rem; }
@@ -69,7 +70,7 @@ img { max-width: 100%; }
   gap: 0.4rem;
   padding: 0.65rem 1.4rem;
   border-radius: var(--radius-sm);
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Noto Sans', Arial, sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -145,7 +146,7 @@ img { max-width: 100%; }
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  font-family: 'Noto Serif', serif;
+  font-family: 'Noto Serif', Georgia, serif;
   font-weight: 700;
   color: var(--navy);
   font-size: 1.05rem;
@@ -411,7 +412,7 @@ img { max-width: 100%; }
   padding: 0.65rem 1rem;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Noto Sans', Arial, sans-serif;
   font-size: 0.9rem;
   background: var(--bg);
   color: var(--text);
@@ -509,7 +510,7 @@ img { max-width: 100%; }
   min-width: 80px;
 }
 
-.stat-number { font-size: 1.6rem; font-weight: 700; font-family: 'Noto Serif', serif; }
+.stat-number { font-size: 1.6rem; font-weight: 700; font-family: 'Noto Serif', Georgia, serif; }
 .stat-label { font-size: 0.73rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 .stat-eligible .stat-number { color: var(--eligible); }
 .stat-partial .stat-number { color: var(--partial); }
@@ -548,7 +549,7 @@ img { max-width: 100%; }
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  font-family: 'Noto Sans', sans-serif;
+  font-family: 'Noto Sans', Arial, sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--text);
@@ -639,7 +640,7 @@ img { max-width: 100%; }
   color: #fff;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-family: 'Noto Serif', serif;
+  font-family: 'Noto Serif', Georgia, serif;
   font-size: 1.3rem;
   font-weight: 700;
   margin: 0 auto 0.75rem;
@@ -684,7 +685,7 @@ img { max-width: 100%; }
   border: 1px solid #A5D6A7;
   border-radius: var(--radius-sm);
 }
-.helpline-number { font-size: 1.4rem; font-weight: 700; color: var(--india-green-dark); font-family: 'Noto Serif', serif; }
+.helpline-number { font-size: 1.4rem; font-weight: 700; color: var(--india-green-dark); font-family: 'Noto Serif', Georgia, serif; }
 
 /* ── WhatsApp Share Button ── */
 .whatsapp-btn {

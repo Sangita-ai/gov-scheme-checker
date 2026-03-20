@@ -4,9 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Check Eligibility — Gov Scheme Checker</title>
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&family=Noto+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    body { overflow: hidden; }
+    body { overflow: hidden; height: 100vh; height: 100dvh; }
     .profile-bar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -167,8 +171,7 @@ function renderMarkdown(text) {
   return text
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/
-/g, '<br>');
+    .replace(/\n/g, '<br>');
 }
 
 function addBubble(role, text) {
