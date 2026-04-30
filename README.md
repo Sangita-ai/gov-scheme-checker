@@ -4,7 +4,7 @@ Ever wondered which government schemes you actually qualify for? Most people mis
 
 This tool fixes that. Answer a few simple questions in a chat — in English, Hindi, or Bengali — and within minutes you'll know exactly which of 25+ central and West Bengal state schemes you're eligible for, along with a step-by-step guide to apply.
 
-**Live demo:** [your-link-here]
+**Live demo:** [https://sangita-ai.github.io/gov-scheme-checker/]
 
 ---
 
